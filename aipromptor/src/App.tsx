@@ -4,14 +4,11 @@ import './App.css';
 import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { observer } from 'mobx-react';
+import { promptScopeStore } from './store'
+import TopPromptScopeNav from './packages/prompt-scope-nav';
 
 const { Header, Content, Sider } = Layout;
-
-const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
-
 const items2: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
   (icon, index) => {
     const key = String(index + 1);
@@ -39,10 +36,7 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <Header className="header">
-        <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} items={items1} />
-      </Header>
+      <TopPromptScopeNav />
       <Layout>
         <Sider width={200} style={{ background: colorBgContainer }}>
           <Menu
