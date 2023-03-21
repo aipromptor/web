@@ -1,9 +1,13 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
+import localeReducer from '../features/v1/locale/localeSlice';
+import scopeTabSlice from '../features/v1/top-nav/promptScopeSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    locale: localeReducer,
+    scope: scopeTabSlice,
   },
 });
 
