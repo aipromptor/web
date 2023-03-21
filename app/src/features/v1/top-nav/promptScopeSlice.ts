@@ -182,7 +182,7 @@ export const fetchPromptsBySelectTab = (index: number): AppThunk => (dispatch, g
     if (index >= 0) {
         const currentTab = selectedTab(getState());
         if (currentTab != null) {
-            if (currentTab.prompts.length == 0)
+            if (currentTab.prompts.length === 0)
                 dispatch(fetchPromptsAsync(currentTab.id));
         }
     }
