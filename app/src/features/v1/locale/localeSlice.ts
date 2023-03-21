@@ -34,7 +34,7 @@ export const localeSlice = createSlice({
             // which detects changes to a "draft state" and produces a brand new
             // immutable state based off those changes
 
-            let index = state.languages.findIndex(l => l.id == action.payload.id);
+            let index = state.languages.findIndex(l => l.id === action.payload.id);
             //language?.checked = action.payload.checked;
             state.languages[index].checked = action.payload.checked;
         },

@@ -8,13 +8,13 @@ import {
     toggleLanguages
 } from './localeSlice';
 
-export interface TextSwicthProps {
+export interface TextSwitchProps {
     text: string;
     code: string;
     id: string;
 }
 
-export function TextSwicth(props: TextSwicthProps) {
+export function TextSwitch(props: TextSwitchProps) {
 
     const dispatch = useAppDispatch();
     return (
@@ -26,11 +26,11 @@ export function TextSwicth(props: TextSwicthProps) {
     )
 }
 
-export function LanguageSwitchs() {
+export function LanguageSwitches() {
     const languages = useAppSelector(toggleLanguages);
     return (
         <FormControl padding='0px 10px' as={HStack}>
-            {languages.map(data => (<TextSwicth key={data.id} text={data.text} id={data.id} code={data.code}></TextSwicth>))}
+            {languages.map(data => (<TextSwitch key={data.id} text={data.text} id={data.id} code={data.code}></TextSwitch>))}
         </FormControl>
     )
 }

@@ -20,15 +20,24 @@ export interface PartialScopeState {
 
 export interface TabState {
     tabs: PartialScopeState[];
-    selectedTab: PartialScopeState | undefined;
+    selectedIndex: number;
     status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: TabState = {
     tabs: [],
     status: 'idle',
-    selectedTab: undefined,
+    selectedIndex: -1,
 };
+
+
+interface PartialScopeStateEntity {
+    id: string;
+    attributes: {
+        name: string;
+        title: string;
+    }
+}
 
 export const fetchScopesAsync = createAsyncThunk(
     'scope/fetch',
@@ -44,9 +53,50 @@ export const fetchScopesAsync = createAsyncThunk(
               }
             }
           }`;
-        const response = await gqlClient.query<PartialScopeState[]>({ query: query, variables: { 'locale': store.getState().locale.language } });
+        const response = await gqlClient.query({ query: query, variables: { 'locale': store.getState().locale.language } });
         // The value we return becomes the `fulfilled` action payload
-        return response.data;
+        const entities = response.data.partialScopes.data as PartialScopeStateEntity[];
+        return entities;
+    }
+);
+
+interface PromptEntity {
+    id: string;
+    attributes: {
+        tag: string;
+        title: string;
+    }
+}
+
+export const fetchPromptsAsync = createAsyncThunk(
+    'prompts/fetch',
+    async (id: string) => {
+        const query = gql`query listPrompt($locale: I18NLocaleCode, $id: ID) {
+            partialScope(locale: $locale, id: $id) {
+              data {
+                id
+                attributes {
+                  locale
+                  name
+                  title
+                  prompts {
+                    data {
+                      id
+                      attributes {
+                        title
+                        tag
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          `;
+        const response = await gqlClient.query({ query: query, variables: { 'locale': store.getState().locale.language, 'id': id } });
+        // The value we return becomes the `fulfilled` action payload
+        const entities = response.data.partialScope.data.attributes.prompts.data as PromptEntity[];
+        return entities;
     }
 );
 
@@ -55,14 +105,16 @@ export const scopeTabSlice = createSlice({
     initialState,
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
-        fetchTabs: (state) => {
-
-        },
-        switchTab: (state, action: PayloadAction<{ id: string, checked: boolean }>) => {
+        switchTab: (state, action: PayloadAction<number>) => {
             // Redux Toolkit allows us to write "mutating" logic in reducers. It
             // doesn't actually mutate the state because it uses the Immer library,
             // which detects changes to a "draft state" and produces a brand new
             // immutable state based off those changes
+            state.selectedIndex = action.payload;
+            console.log('switchTab', action.payload);
+        },
+        fetchPromptsBySelectTab: () => {
+            console.log('ddd');
         },
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -74,10 +126,41 @@ export const scopeTabSlice = createSlice({
             })
             .addCase(fetchScopesAsync.fulfilled, (state, action) => {
                 state.status = 'idle';
-                state.tabs = action.payload;
+                state.tabs = action.payload.map(e => (
+                    {
+                        id: e.id,
+                        code: e.attributes.name,
+                        text: e.attributes.title,
+                        selected: false,
+                        prompts: []
+                    }));
+
+                if (state.tabs.length > 0)
+                    state.selectedIndex = 0;
             })
             .addCase(fetchScopesAsync.rejected, (state) => {
                 state.status = 'failed';
+            })
+
+            .addCase(fetchPromptsAsync.pending, (state) => {
+                state.status = 'loading';
+                console.log('fetchPromptsAsync.pending');
+            })
+            .addCase(fetchPromptsAsync.fulfilled, (state, action) => {
+                state.status = 'idle';
+                console.log('fetchPromptsAsync.fulfilled');
+                console.log(action.payload);
+                state.tabs[state.selectedIndex].prompts = action.payload.map(p => (
+                    {
+                        id: p.id,
+                        tag: p.attributes.tag,
+                        title: p.attributes.title,
+                        selected: false,
+                    }));
+            })
+            .addCase(fetchPromptsAsync.rejected, (state) => {
+                state.status = 'failed';
+                console.log('fetchPromptsAsync.rejected');
             });
     },
 });
@@ -88,5 +171,22 @@ export const { switchTab } = scopeTabSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const scopeNavs = (state: RootState) => state.scope.tabs;
-export const selectedScope = (state: RootState) => state.scope.selectedTab;
+export const selectedIndex = (state: RootState) => state.scope.selectedIndex;
+export const selectedTab = (state: RootState) => {
+    if (state.scope.selectedIndex >= 0) {
+        return state.scope.tabs[state.scope.selectedIndex];
+    }
+    return null;
+};
+
+export const fetchPromptsBySelectTab = (index: number): AppThunk => (dispatch, getState) => {
+    if (index >= 0) {
+        const currentTab = selectedTab(getState());
+        if (currentTab != null) {
+            dispatch(fetchPromptsAsync(currentTab.id));
+        }
+    }
+};
+
+
 export default scopeTabSlice.reducer;

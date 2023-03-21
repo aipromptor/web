@@ -1,6 +1,6 @@
 import { ChakraProvider, Container, VStack, StackDivider, Heading, Spacer } from '@chakra-ui/react';
 import { PromptScopeTopNavTabs } from './top-nav/promptScopeTopNav'
-import { LanguageSwitchs } from './locale/localeSwitch';
+import { LanguageSwitches } from './locale/localeSwitch';
 
 function AppV1() {
     return (
@@ -10,7 +10,7 @@ function AppV1() {
                     spacing={4}
                     align='stretch'>
                     <Heading>AI Promptor v1.0</Heading>
-                    <LanguageSwitchs />
+                    <LanguageSwitches />
                     <PromptScopeTopNavTabs />
                 </VStack>
             </Container>
