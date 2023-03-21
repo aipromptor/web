@@ -1,4 +1,4 @@
-import { ChakraProvider, Container, VStack, StackDivider, Heading, Spacer } from '@chakra-ui/react';
+import { ChakraProvider, Container, VStack, StackDivider, Heading } from '@chakra-ui/react';
 import { PromptScopeTopNavTabs } from './top-nav/promptScopeTopNav'
 import { LanguageSwitches } from './locale/localeSwitch';
 

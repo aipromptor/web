@@ -1,6 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
-
 import AppV1 from './features/v1';
 import './App.scss';
 

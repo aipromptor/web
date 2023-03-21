@@ -1,6 +1,4 @@
 import { Switch, HStack, FormControl, Flex, FormLabel } from '@chakra-ui/react'
-import React, { useState } from 'react';
-
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 
 import {
