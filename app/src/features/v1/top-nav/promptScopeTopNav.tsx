@@ -34,8 +34,7 @@ export function PromptScopeTopNavTabs() {
             <HStack>
               {t.prompts.map((p, pi) => (
                 <Button key={p.id} onClick={(e) => dispatch(togglePrompt({ scopeIndex: ti, promptIndex: pi }))}
-                  backgroundColor={p.selected ? 'green.300' : ''}
-                  color={p.selected ? 'white' : ''}
+                  colorScheme={p.selected ? 'green' : ''}
                   leftIcon={p.selected ? <CheckIcon /> : <AddIcon />}
                   variant='outline'>{p.title}</Button>
               ))}
