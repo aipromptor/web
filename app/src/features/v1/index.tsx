@@ -1,6 +1,7 @@
 import { ChakraProvider, Container, VStack, StackDivider, Heading } from '@chakra-ui/react';
-import { PromptScopeTopNavTabs } from './top-nav/promptScopeTopNav'
+import { CategoryTopNavTabs } from './top-nav/categoryTopNav'
 import { LanguageSwitches } from './locale/localeSwitch';
+import { PromptSelectedPanel } from './bottom-selected-panel/selected-panel'
 
 function AppV1() {
     return (
@@ -11,7 +12,8 @@ function AppV1() {
                     align='stretch'>
                     <Heading>AI Promptor v1.0</Heading>
                     <LanguageSwitches />
-                    <PromptScopeTopNavTabs />
+                    <CategoryTopNavTabs />
+                    <PromptSelectedPanel />
                 </VStack>
             </Container>
         </ChakraProvider>

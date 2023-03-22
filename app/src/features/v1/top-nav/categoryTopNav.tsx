@@ -10,10 +10,10 @@ import {
   fetchScopesAsync,
   fetchPromptsBySelectTab,
   togglePrompt,
-} from './promptScopeSlice';
+} from './categoryTopNavSlice';
 
 
-export function PromptScopeTopNavTabs() {
+export function CategoryTopNavTabs() {
 
   const dispatch = useAppDispatch();
 

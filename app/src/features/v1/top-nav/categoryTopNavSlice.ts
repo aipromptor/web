@@ -31,7 +31,7 @@ const initialState: TabState = {
 };
 
 
-interface PartialScopeStateEntity {
+interface CategoryEntity {
     id: string;
     attributes: {
         name: string;
@@ -54,8 +54,8 @@ export const selectedTab = (state: RootState) => {
 export const fetchScopesAsync = createAsyncThunk(
     'scope/fetch',
     async () => {
-        const query = gql`query listScopes($locale: I18NLocaleCode) {
-            partialScopes(locale: $locale) {
+        const query = gql`query listCategories($locale: I18NLocaleCode, $filter: CategoryFiltersInput) {
+            categories(locale: $locale, filters: $filter) {
               data {
                 id
                 attributes {
@@ -64,10 +64,17 @@ export const fetchScopesAsync = createAsyncThunk(
                 }
               }
             }
-          }`;
-        const response = await gqlClient.query({ query: query, variables: { 'locale': store.getState().locale.language } });
+          }
+          `;
+        const response = await gqlClient.query({
+            query: query, variables:
+            {
+                'locale': store.getState().locale.language,
+                'filter': { "tag_marketings": { "name": { "eq": "homepage" } } },
+            }
+        });
         // The value we return becomes the `fulfilled` action payload
-        const entities = response.data.partialScopes.data as PartialScopeStateEntity[];
+        const entities = response.data.categories.data as CategoryEntity[];
         return entities;
     }
 );
@@ -83,15 +90,19 @@ interface PromptEntity {
 export const fetchPromptsAsync = createAsyncThunk(
     'prompts/fetch',
     async (id: string) => {
-        const query = gql`query listPrompt($locale: I18NLocaleCode, $id: ID) {
-            partialScope(locale: $locale, id: $id) {
+        const query = gql`query listPrompts(
+            $locale: I18NLocaleCode
+            $id: ID
+            $filters: PromptFiltersInput
+          ) {
+            category(locale: $locale, id: $id) {
               data {
                 id
                 attributes {
                   locale
                   name
                   title
-                  prompts {
+                  hot_prompts(filters: $filters) {
                     data {
                       id
                       attributes {
@@ -103,11 +114,18 @@ export const fetchPromptsAsync = createAsyncThunk(
                 }
               }
             }
-          }
+          }                   
           `;
-        const response = await gqlClient.query({ query: query, variables: { 'locale': store.getState().locale.language, 'id': id } });
+        const response = await gqlClient.query({
+            query: query, variables:
+            {
+                'locale': store.getState().locale.language,
+                'id': id,
+                "filters": { "tag_marketings": { "name": { "eq": "homepage" } } }
+            }
+        });
         // The value we return becomes the `fulfilled` action payload
-        const entities = response.data.partialScope.data.attributes.prompts.data as PromptEntity[];
+        const entities = response.data.category.data.attributes.hot_prompts.data as PromptEntity[];
         return entities;
     }
 );
@@ -149,15 +167,14 @@ export const scopeTabSlice = createSlice({
                         prompts: []
                     }));
 
-                if (state.tabs.length > 0)
+                if (state.tabs.length > 0) {
                     state.selectedIndex = 0;
+                }
             })
             .addCase(fetchScopesAsync.rejected, (state) => {
                 state.status = 'failed';
             })
-
             .addCase(fetchPromptsAsync.pending, (state) => {
-                state.status = 'loading';
             })
             .addCase(fetchPromptsAsync.fulfilled, (state, action) => {
                 state.status = 'idle';
