@@ -17,8 +17,8 @@ export function TextSwitch(props: TextSwitchProps) {
     const dispatch = useAppDispatch();
     return (
         <Flex>
-            <FormLabel htmlFor={props.id}>{props.text}</FormLabel>
-            <Switch id={props.id} size='lg' defaultChecked aria-label='Show translation'
+            <FormLabel htmlFor={props.id} size='sm'>{props.text}</FormLabel>
+            <Switch id={props.id} size='md' defaultChecked aria-label='Show translation'
                 onChange={(e) => dispatch(toggle({ id: e.target.id, checked: e.target.checked }))} />
         </Flex>
     )
@@ -28,7 +28,12 @@ export function LanguageSwitches() {
     const languages = useAppSelector(toggleLanguages);
     return (
         <FormControl padding='0px 10px' as={HStack}>
-            {languages.map(data => (<TextSwitch key={data.id} text={data.text} id={data.id} code={data.code}></TextSwitch>))}
+            {languages.map(data => (
+            <TextSwitch 
+            key={data.id} 
+            text={data.text} 
+            id={data.id} 
+            code={data.code}></TextSwitch>))}
         </FormControl>
     )
 }
