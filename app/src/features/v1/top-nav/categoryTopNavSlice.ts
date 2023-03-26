@@ -69,7 +69,7 @@ export const fetchScopesAsync = createAsyncThunk(
         const response = await gqlClient.query({
             query: query, variables:
             {
-                'locale': store.getState().locale.language,
+                'locale': 'zh-CN',
                 'filter': { "tag_marketings": { "name": { "eq": "homepage" } } },
             }
         });
@@ -119,7 +119,7 @@ export const fetchPromptsAsync = createAsyncThunk(
         const response = await gqlClient.query({
             query: query, variables:
             {
-                'locale': store.getState().locale.language,
+                'locale': 'zh-CN',
                 'id': id,
                 "filters": { "tag_marketings": { "name": { "eq": "homepage" } } }
             }
