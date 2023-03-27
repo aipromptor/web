@@ -1,25 +1,13 @@
-import { Select } from "@chakra-ui/react";
-import { useDispatch } from "react-redux";
-import { setLocale, getCountries, getFlagEmoji } from "./slice";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
-    Switch,
-    Text,
-    Box,
-    Flex,
-    FormLabel,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    Image,
-    Button,
+    Box, Button, Menu,
+    MenuButton, MenuItem, MenuList
 } from "@chakra-ui/react";
-import { RootState } from "../../../app/store";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { getCountries } from "./slice";
 // import { FlagIcon } from "emoji-flags";
 import ReactCountryFlag from "react-country-flag";
 
-import { CloseIcon, CheckIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const LocaleSelector = () => {
     const dispatch = useAppDispatch();
@@ -41,7 +29,7 @@ const LocaleSelector = () => {
                 </MenuButton>
                 <MenuList>
                     {countries.map((country) => (
-                        <MenuItem minH="48px">
+                        <MenuItem minH="48px" key={country.code}>
                             <Box boxSize="2rem" borderRadius="full">
                                 <ReactCountryFlag countryCode={country.code} svg />
                             </Box>

@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk, store } from '../../../app/store';
-import { gqlClient } from '../../../app/api';
 import { gql } from '@apollo/client';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { gqlClient } from '../../../app/api';
+import { AppThunk, RootState } from '../../../app/store';
 
 export interface Prompt {
     tag: string;

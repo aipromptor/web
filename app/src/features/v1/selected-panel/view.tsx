@@ -1,32 +1,19 @@
-import { useState, useEffect } from "react";
-import {
-    VStack,
-    HStack,
-    Box,
-    Button,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
-    IconButton,
-    Container,
-} from "@chakra-ui/react";
-import { CloseIcon, CheckIcon, AddIcon } from "@chakra-ui/icons";
-import { RootState } from "../../../app/store";
+import { AddIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { Box, Button, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { fetchTabs, getTabs } from "./slice";
 // import { getLanguage } from "../locale/slice";
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 
-type Tab = {
-    id: number;
-    name: string;
-    tags: string[];
-};
+// type TabProps = {
+//     id: number;
+//     name: string;
+//     tags: string[];
+// };
 
-type TabsData = {
-    [key: string]: string[];
-};
+// type TabsData = {
+//     [key: string]: string[];
+// };
 
 export default function TagSelector() {
     const dispatch = useAppDispatch();
@@ -47,12 +34,6 @@ export default function TagSelector() {
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
     const tabs = useAppSelector(getTabs);
-
-    const tabsData: TabsData = {
-        "1": ["tag1", "tag2", "tag3"],
-        "2": ["tag4", "tag5", "tag6"],
-        "3": ["tag7", "tag8", "tag9"],
-    };
 
     // const tabs: Tab[] = [
     //     { id: 1, name: "Tab 1", tags: tabsData["1"] },

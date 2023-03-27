@@ -1,4 +1,4 @@
-import { Flex, Heading, Spacer, StackDivider, VStack } from "@chakra-ui/react";
+import { Flex, Heading, StackDivider, VStack } from "@chakra-ui/react";
 import LocaleSelector from "../locale/view";
 
 function HeaderV1() {

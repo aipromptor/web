@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk, store } from "../../../app/store";
+import { RootState } from "../../../app/store";
 
 type LanguageOption = "en" | "zh-CN";
 

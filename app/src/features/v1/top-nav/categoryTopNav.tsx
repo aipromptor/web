@@ -1,15 +1,11 @@
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Button, HStack, } from '@chakra-ui/react'
-import { CheckIcon, AddIcon } from '@chakra-ui/icons'
-import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { AddIcon, CheckIcon } from '@chakra-ui/icons';
+import { Button, HStack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 
 import {
-  switchTab,
-  scopeNavs,
-  selectedIndex,
-  fetchScopesAsync,
-  fetchPromptsBySelectTab,
-  togglePrompt,
+  fetchPromptsBySelectTab, fetchScopesAsync, scopeNavs,
+  selectedIndex, switchTab, togglePrompt
 } from './categoryTopNavSlice';
 
 

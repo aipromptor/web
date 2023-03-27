@@ -1,9 +1,7 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { gqlClient } from '../../../app/api';
 import { gql } from '@apollo/client';
-import { useSelector } from 'react-redux';
-import { RootState, AppThunk, store } from '../../../app/store';
-import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { gqlClient } from '../../../app/api';
+import { RootState } from '../../../app/store';
 
 interface Tag {
     id: string;
