@@ -1,8 +1,8 @@
 import { AddIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { fetchTabs, getTabs } from "./slice";
-// import { getLanguage } from "../locale/slice";
+import { fetchTabs, getTabs, fetchPromptsAsync, switchTab, getSelectedTab } from "./slice";
+import { getSystemLanguage } from "../locale/slice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 
 // type TabProps = {
@@ -15,25 +15,30 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 //     [key: string]: string[];
 // };
 
+type TagData = {
+    id: string;
+    title: string;
+}
+
 export default function TagSelector() {
+
     const dispatch = useAppDispatch();
 
-    //   const language = useAppSelector(getLanguage);
+    const tabs = useAppSelector(getTabs);
 
-    useEffect(
-        () => {
-            dispatch(fetchTabs());
-        },
-        [
-            //language
-        ]
-    );
+    const systemLanguage = useAppSelector(getSystemLanguage);
 
-    const [activeTab, setActiveTab] = useState(1);
+    useEffect(() => {
+        dispatch(fetchTabs())
+    }, [dispatch, systemLanguage]);
+
+    const selectedTab = useAppSelector(getSelectedTab);
+
+    useEffect(() => {
+        dispatch(fetchPromptsAsync({ categoryId: selectedTab?.id }))
+    }, [dispatch, selectedTab]);
 
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-    const tabs = useAppSelector(getTabs);
 
     // const tabs: Tab[] = [
     //     { id: 1, name: "Tab 1", tags: tabsData["1"] },
@@ -59,7 +64,7 @@ export default function TagSelector() {
                 variant="soft-rounded"
                 colorScheme="blue"
                 borderRadius="md"
-                onChange={(index) => setActiveTab(index + 1)}
+                onChange={(e) => dispatch(switchTab(e))}
             >
                 <TabList>
                     {tabs.map((tab) => (
@@ -79,7 +84,7 @@ export default function TagSelector() {
                                         onClick={() => handleTagClick(tag.id)}
                                         leftIcon={selectedTags.includes(tag.id) ? <CheckIcon /> : <AddIcon />}
                                     >
-                                        {tag.name}
+                                        {tag.title}
                                     </Button>
                                 ))}
                             </HStack>

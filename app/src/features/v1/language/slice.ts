@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
+import i18n from "i18next";
 
 type LanguageOption = "en" | "zh-CN";
 
 interface LanguageState {
-    id: LanguageOption;
+    id: string;
     title: string;
 }
 
@@ -29,7 +30,6 @@ const languageSelectorSlice = createSlice({
     initialState,
     reducers: {
         setLanguages: (state, action: PayloadAction<LanguageState[]>) => {
-            console.log("setLanguages", action.payload);
             state.selectedLanguages = action.payload;
         },
     },

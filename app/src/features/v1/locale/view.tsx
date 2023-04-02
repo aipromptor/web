@@ -6,11 +6,19 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { getCountries } from "./slice";
 // import { FlagIcon } from "emoji-flags";
 import ReactCountryFlag from "react-country-flag";
-
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { useTranslation } from 'react-i18next';
+import i18n from "i18next";
+import Backend from "i18next-http-backend";
+import LanguageDetector from "i18next-browser-languagedetector";
+import { initReactI18next } from "react-i18next";
+import { setSystemLanguage } from './slice';
 
 const LocaleSelector = () => {
+   
     const dispatch = useAppDispatch();
+    const { t } = useTranslation('actions');
+
 
     const countries = useAppSelector(getCountries);
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -24,7 +32,7 @@ const LocaleSelector = () => {
     return (
         <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                选择国家
+                {t('select-language')}
             </MenuButton>
             <MenuList>
                 {countries.map((country) => (

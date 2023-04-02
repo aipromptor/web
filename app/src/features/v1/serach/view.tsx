@@ -1,17 +1,15 @@
 import { Box, Input, Text } from "@chakra-ui/react";
 import React from "react";
+import { useTranslation } from 'react-i18next';
 
-interface SearchProps {
-    language: string;
-}
+const Search: React.FC = () => {
 
-const Search: React.FC<SearchProps> = ({ language }) => {
+    const { t } = useTranslation('labels');
+    const placeholder = t('search-placeholder');
+    
     return (
         <Box p={4}>
-            <Text fontSize="xl" fontWeight="bold" mb={4}>
-                搜索 {language} AI 提示词
-            </Text>
-            <Input placeholder={`输入${language}提示词`} />
+            <Input placeholder={placeholder} />
         </Box>
     );
 };

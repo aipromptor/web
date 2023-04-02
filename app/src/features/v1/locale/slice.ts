@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
+import i18n from "i18next";
 
 type CountryOption = "CN" | "US";
 
@@ -11,6 +12,7 @@ interface CountryState {
 interface LocaleSelectorState {
     countries: CountryState[];
     locale: CountryState;
+    systemLanguage: string;
 }
 
 export function getFlagEmoji(countryCode: string) {
@@ -27,19 +29,28 @@ const initialState: LocaleSelectorState = {
         { code: "US", title: "美国" },
     ],
     locale: { code: "CN", title: "中国" },
+    systemLanguage: i18n.language,
 };
+console.log("initialState", initialState);
 
 const localeSelectorSlice = createSlice({
     name: "languageSelector",
     initialState,
     reducers: {
         setLocale: (state, action: PayloadAction<CountryOption>) => {},
+        setSystemLanguage: (state, action: PayloadAction<string>) => {
+            i18n.changeLanguage(action.payload);
+        },
+        detectSystemLanguage: (state, action: PayloadAction<string>) => {
+            state.systemLanguage = action.payload;
+        },
     },
 });
 
 export const getCountries = (state: RootState) => state.locale.countries;
-export const getlocale = (state: RootState) => state.locale.locale;
+export const getLocale = (state: RootState) => state.locale.locale;
+export const getSystemLanguage = (state: RootState) => state.locale.systemLanguage;
 
-export const { setLocale } = localeSelectorSlice.actions;
+export const { setLocale, setSystemLanguage, detectSystemLanguage } = localeSelectorSlice.actions;
 
 export default localeSelectorSlice.reducer;

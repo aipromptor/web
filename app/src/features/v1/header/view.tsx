@@ -1,11 +1,13 @@
 import { Flex, Heading, StackDivider, VStack } from "@chakra-ui/react";
 import LocaleSelector from "../locale/view";
+import { useTranslation } from 'react-i18next';
 
 function HeaderV1() {
+    const { t } = useTranslation('labels');
     return (
-        <VStack divider={<StackDivider borderColor="gray.200" />} spacing={4} align="stretch" mt={4}>
+        <VStack divider={<StackDivider borderColor="gray.200" />} align="stretch">
             <Flex alignItems="center" justifyContent="space-between">
-                <Heading>AI Promptor v1.0</Heading>
+                <Heading>{t('title')}</Heading>
                 <LocaleSelector />
             </Flex>
         </VStack>
