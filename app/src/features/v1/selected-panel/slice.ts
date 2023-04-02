@@ -159,6 +159,7 @@ const tabsSlice = createSlice({
                 state.loading = false;
                 console.log("fetchTabs.fulfilled");
                 state.tabs = action.payload;
+                state.selectedTab = state.tabs[0];
             })
             .addCase(fetchTabs.rejected, (state, action) => {
                 state.loading = false;
