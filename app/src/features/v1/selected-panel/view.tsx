@@ -40,22 +40,24 @@ export default function TagSelector() {
 
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+    const [selectedPrompts, setSelectedPrompts] = useState<TagData[]>([]);
+
     // const tabs: Tab[] = [
     //     { id: 1, name: "Tab 1", tags: tabsData["1"] },
     //     { id: 2, name: "Tab 2", tags: tabsData["2"] },
     //     { id: 3, name: "Tab 3", tags: tabsData["3"] },
     // ];
 
-    const handleTagClick = (tag: string) => {
-        if (selectedTags.includes(tag)) {
-            setSelectedTags(selectedTags.filter((t) => t !== tag));
+    const handlePromptClick = (prompt: TagData) => {
+        if (selectedPrompts.includes(prompt)) {
+            setSelectedPrompts(selectedPrompts.filter((p) => p !== prompt));
         } else {
-            setSelectedTags([...selectedTags, tag]);
+            setSelectedPrompts([...selectedPrompts, prompt]);
         }
     };
 
-    const handleRemoveTagClick = (tag: string) => {
-        setSelectedTags(selectedTags.filter((t) => t !== tag));
+    const handleRemovePromptClick = (prompt: TagData) => {
+        setSelectedPrompts(selectedPrompts.filter((p) => p !== prompt));
     };
 
     return (
@@ -79,10 +81,10 @@ export default function TagSelector() {
                                     <Button
                                         key={tag.id}
                                         variant="outline"
-                                        colorScheme={selectedTags.includes(tag.id) ? "green" : "gray"}
+                                        colorScheme={selectedPrompts.includes(tag) ? "green" : "gray"}
                                         size="xs"
-                                        onClick={() => handleTagClick(tag.id)}
-                                        leftIcon={selectedTags.includes(tag.id) ? <CheckIcon /> : <AddIcon />}
+                                        onClick={() => handlePromptClick(tag)}
+                                        leftIcon={selectedPrompts.includes(tag) ? <CheckIcon /> : <AddIcon />}
                                     >
                                         {tag.title}
                                     </Button>
@@ -93,19 +95,19 @@ export default function TagSelector() {
                 </TabPanels>
             </Tabs>
 
-            <Box bg="white" position="fixed" bottom="0" w="100%" borderRadius="lg">
-                {selectedTags.map((tag, index) => (
+            <Box bg="gray.400" position="fixed" bottom="0" w="100%" borderRadius="lg">
+                {selectedPrompts.map((tag, index) => (
                     <Button
-                        key={tag}
+                        key={tag.id}
                         variant="solid"
                         colorScheme="green"
                         size="sm"
                         mr="2"
                         mb="2"
                         leftIcon={<CloseIcon />}
-                        onClick={() => handleRemoveTagClick(tag)}
+                        onClick={() => handleRemovePromptClick(tag)}
                     >
-                        {tag}
+                        {tag.title}
                     </Button>
                 ))}
             </Box>
