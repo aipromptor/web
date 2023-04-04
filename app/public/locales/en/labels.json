@@ -1,4 +1,7 @@
 {
     "title": "AiPromptor",
-    "search-placeholder":"keyword of prompt here"
+    "search-placeholder":"keyword of prompt here",
+    "sd-server-label":"Server address",
+    "sd-server-web-url-placeholder":"your Stable Diffusion web url",
+    "sd-server-settings":"Server Settings"
 }

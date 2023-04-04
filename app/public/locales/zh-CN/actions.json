@@ -3,5 +3,7 @@
     "home":"首页",
     "my-groups":"我的分组",
     "trending-now":"热图",
-    "select-language":"选择语言"
+    "select-language":"选择语言",
+    "text-generate-image":"生成图片",
+    "set-sd-server":"服务器设置"
 }

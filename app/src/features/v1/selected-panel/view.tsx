@@ -1,26 +1,23 @@
-import { AddIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { Box, Button, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { fetchTabs, getTabs, fetchPromptsAsync, switchTab, getSelectedTab } from "./slice";
+import { AddIcon, CheckIcon, CloseIcon, ArrowForwardIcon, SettingsIcon } from "@chakra-ui/icons";
+import {
+    Box, Button, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack, StackDivider,
+    FormControl, FormLabel, Input,
+    Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure
+} from "@chakra-ui/react";
+import { useEffect, useState, useRef } from "react";
+import { fetchTabs, getTabs, fetchPromptsAsync, switchTab, getSelectedTab, getServer, setServer } from "./slice";
 import { getSystemLanguage } from "../locale/slice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useTranslation } from 'react-i18next';
 
-// type TabProps = {
-//     id: number;
-//     name: string;
-//     tags: string[];
-// };
-
-// type TabsData = {
-//     [key: string]: string[];
-// };
-
-type TagData = {
+type PromptProps = {
     id: string;
     title: string;
 }
 
 export default function TagSelector() {
+
+    const { t } = useTranslation(['actions', 'labels']);
 
     const dispatch = useAppDispatch();
 
@@ -38,17 +35,10 @@ export default function TagSelector() {
         dispatch(fetchPromptsAsync({ categoryId: selectedTab?.id }))
     }, [dispatch, selectedTab]);
 
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-    const [selectedPrompts, setSelectedPrompts] = useState<TagData[]>([]);
+    const [selectedPrompts, setSelectedPrompts] = useState<PromptProps[]>([]);
 
-    // const tabs: Tab[] = [
-    //     { id: 1, name: "Tab 1", tags: tabsData["1"] },
-    //     { id: 2, name: "Tab 2", tags: tabsData["2"] },
-    //     { id: 3, name: "Tab 3", tags: tabsData["3"] },
-    // ];
-
-    const handlePromptClick = (prompt: TagData) => {
+    const handlePromptClick = (prompt: PromptProps) => {
         if (selectedPrompts.includes(prompt)) {
             setSelectedPrompts(selectedPrompts.filter((p) => p !== prompt));
         } else {
@@ -56,12 +46,30 @@ export default function TagSelector() {
         }
     };
 
-    const handleRemovePromptClick = (prompt: TagData) => {
+    const handleRemovePromptClick = (prompt: PromptProps) => {
         setSelectedPrompts(selectedPrompts.filter((p) => p !== prompt));
     };
 
+    const server = useAppSelector(getServer);
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const sdServerWebUrlPlaceholder = t('sd-server-web-url-placeholder', { ns: 'labels' });
+    const initialRef = useRef(null)
+    const finalRef = useRef(null)
+
+    const [webUrl, setWebUrl] = useState(server.webUrl);
+
+    const handleConfirm = () => {
+        dispatch(setServer({ ...server, webUrl }));
+        onClose();
+    };
+
+    const handleWebUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setWebUrl(event.target.value);
+    };
+
     return (
-        <VStack align="stretch">
+        <VStack id="select-panel" align="stretch" divider={<StackDivider borderColor="gray.200" />} >
             <Tabs
                 variant="soft-rounded"
                 colorScheme="blue"
@@ -95,12 +103,12 @@ export default function TagSelector() {
                 </TabPanels>
             </Tabs>
 
-            <Box bg="gray.400" position="fixed" bottom="0" w="100%" borderRadius="lg">
+            <Box borderRadius="lg">
                 {selectedPrompts.map((tag, index) => (
                     <Button
                         key={tag.id}
                         variant="solid"
-                        colorScheme="green"
+                        colorScheme="teal"
                         size="sm"
                         mr="2"
                         mb="2"
@@ -111,6 +119,40 @@ export default function TagSelector() {
                     </Button>
                 ))}
             </Box>
+
+            <HStack>
+                <Button rightIcon={<ArrowForwardIcon />} colorScheme='teal' variant='outline'>
+                    {t('text-generate-image')}
+                </Button>
+                <Button onClick={onOpen} rightIcon={<SettingsIcon />} colorScheme='teal' variant='outline'>
+                    {t('set-sd-server')}
+                </Button>
+                <Modal
+                    initialFocusRef={initialRef}
+                    finalFocusRef={finalRef}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                >
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>{t('sd-server-settings', { ns: 'labels' })}</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody pb={6}>
+                            <FormControl>
+                                <FormLabel>{t('sd-server-label', { ns: 'labels' })}</FormLabel>
+                                <Input ref={initialRef} placeholder={sdServerWebUrlPlaceholder} value={webUrl} onChange={handleWebUrlChange} />
+                            </FormControl>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button onClick={handleConfirm} colorScheme='teal' mr={3}>
+                                Save
+                            </Button>
+                            <Button onClick={onClose}>Cancel</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            </HStack>
         </VStack>
     );
 }

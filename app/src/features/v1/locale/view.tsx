@@ -8,11 +8,6 @@ import { getCountries } from "./slice";
 import ReactCountryFlag from "react-country-flag";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useTranslation } from 'react-i18next';
-import i18n from "i18next";
-import Backend from "i18next-http-backend";
-import LanguageDetector from "i18next-browser-languagedetector";
-import { initReactI18next } from "react-i18next";
-import { setSystemLanguage } from './slice';
 
 const LocaleSelector = () => {
    

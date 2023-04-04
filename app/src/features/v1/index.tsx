@@ -11,8 +11,8 @@ function AppV1() {
             <VStack id="main" justifyContent='center' divider={<StackDivider borderColor="gray.200" />} spacing={4} align="stretch">
 
                 <HStack justifyContent='center' alignItems='inherit' spacing={4} mt={4}>
-                    <Flex id='left-top-actions' maxW='md'>
-                        <DrawNavigate language="中文" />
+                    <Flex id='left-top-actions' maxW='md' minW='3xs'>
+                        {/* <DrawNavigate language="中文" /> */}
                     </Flex>
                     <Container minW='6xl'>
                         <HeaderV1 />
@@ -26,7 +26,7 @@ function AppV1() {
 
                     <VStack>
                         <Container id="main-content" minW='6xl'>
-                            <Search />
+                            {/* <Search /> */}
                             <PromptSelectedPanel />
                         </Container>
 

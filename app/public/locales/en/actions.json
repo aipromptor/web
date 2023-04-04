@@ -3,5 +3,7 @@
     "home":"Home",
     "my-groups":"My Groups",
     "trending-now":"Trending",
-    "select-language":"Languages"
+    "select-language":"Languages",
+    "text-generate-image":"Generate",
+    "set-sd-server":"Server Settings"
 }

@@ -10,7 +10,7 @@ interface DrawNavigateProps {
 const DrawNavigate: React.FC<DrawNavigateProps> = ({ language }) => {
     const { t } = useTranslation('actions');
     return (
-        <HStack alignItems='flex-start' minW='3xs'>
+        <HStack alignItems='flex-start'>
             <Button colorScheme='blue' leftIcon={<MdDraw />}>
                 {t('draw-now')}
             </Button>
