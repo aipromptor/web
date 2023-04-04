@@ -5,9 +5,10 @@ import {
     Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
-import { fetchTabs, getTabs, fetchPromptsAsync, switchTab, getSelectedTab, getServer, setServer } from "./slice";
+import { fetchTabs, getTabs, fetchPromptsAsync, switchTab, getSelectedTab, getServer, setServer, generateTextToImage } from "./slice";
 import { getSystemLanguage } from "../locale/slice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { RootState } from "../../../app/store";
 import { useTranslation } from 'react-i18next';
 
 type PromptProps = {
@@ -54,10 +55,12 @@ export default function TagSelector() {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const sdServerWebUrlPlaceholder = t('sd-server-web-url-placeholder', { ns: 'labels' });
+    const generatingLoadingText = t('button-generating', { ns: 'labels' });
+    const generating = useAppSelector((state: RootState) => state.category.server.status);
     const initialRef = useRef(null)
     const finalRef = useRef(null)
 
-    const [webUrl, setWebUrl] = useState(server.webUrl);
+    const [webUrl, setWebUrl] = useState(server.data.webUrl);
 
     const handleConfirm = () => {
         dispatch(setServer({ ...server, webUrl }));
@@ -66,6 +69,10 @@ export default function TagSelector() {
 
     const handleWebUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWebUrl(event.target.value);
+    };
+
+    const handleGenerate = () => {
+        dispatch(generateTextToImage({ prompt: '' }))
     };
 
     return (
@@ -121,7 +128,11 @@ export default function TagSelector() {
             </Box>
 
             <HStack>
-                <Button rightIcon={<ArrowForwardIcon />} colorScheme='teal' variant='outline'>
+                <Button onClick={handleGenerate}
+                    isLoading={generating === 'loading'}
+                    loadingText={generatingLoadingText}
+                    rightIcon={<ArrowForwardIcon />}
+                    colorScheme='teal' variant='outline'>
                     {t('text-generate-image')}
                 </Button>
                 <Button onClick={onOpen} rightIcon={<SettingsIcon />} colorScheme='teal' variant='outline'>

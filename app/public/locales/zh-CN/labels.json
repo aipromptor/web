@@ -3,5 +3,6 @@
     "search-placeholder":"请输入关键字",
     "sd-server-label":"服务器地址",
     "sd-server-web-url-placeholder":"Stable Diffusion Web 服务器地址",
-    "sd-server-settings":"服务器配置"
+    "sd-server-settings":"服务器配置",
+    "button-generating":"正在生成"
 }
