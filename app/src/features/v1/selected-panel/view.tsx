@@ -1,19 +1,19 @@
-import { AddIcon, CheckIcon, CloseIcon, ArrowForwardIcon, SettingsIcon } from "@chakra-ui/icons";
+import { AddIcon, ArrowForwardIcon, CheckIcon, CloseIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
-    Box, Button, HStack, Tab, TabList, TabPanel, TabPanels, Tabs, VStack, StackDivider,
-    FormControl, FormLabel, Input,
-    Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure
+    Box, Button, FormControl, FormLabel, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, StackDivider, Tab, TabList, TabPanel, TabPanels, Tabs, useDisclosure, VStack
 } from "@chakra-ui/react";
-import { useEffect, useState, useRef } from "react";
-import { fetchTabs, getTabs, fetchPromptsAsync, switchTab, getSelectedTab, getServer, setServer, generateTextToImage } from "./slice";
-import { getSystemLanguage } from "../locale/slice";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { RootState } from "../../../app/store";
-import { useTranslation } from 'react-i18next';
+import { ImageScrollPanel } from "../image-card/view";
+import { getSystemLanguage } from "../locale/slice";
+import { fetchPromptsAsync, fetchTabs, generateTextToImage, getSelectedTab, getServer, getTabs, setServer, switchTab } from "./slice";
 
 type PromptProps = {
     id: string;
     title: string;
+    tag: string;
 }
 
 export default function TagSelector() {
@@ -72,7 +72,8 @@ export default function TagSelector() {
     };
 
     const handleGenerate = () => {
-        dispatch(generateTextToImage({ prompt: '' }))
+        const prompt = selectedPrompts.map(t => t.tag).join(',');
+        dispatch(generateTextToImage({ prompt: prompt }))
     };
 
     return (
@@ -164,6 +165,9 @@ export default function TagSelector() {
                     </ModalContent>
                 </Modal>
             </HStack>
+
+            <ImageScrollPanel />
+
         </VStack>
     );
 }

@@ -5,8 +5,8 @@ import {
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { getCountries } from "./slice";
 // import { FlagIcon } from "emoji-flags";
-import ReactCountryFlag from "react-country-flag";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import ReactCountryFlag from "react-country-flag";
 import { useTranslation } from 'react-i18next';
 
 const LocaleSelector = () => {

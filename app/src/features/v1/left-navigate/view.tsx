@@ -1,7 +1,8 @@
-import { Box, Button, VStack } from "@chakra-ui/react";
+import { Button, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { MdHome, MdWhatshot } from 'react-icons/md'
+import { MdHome, MdWhatshot } from 'react-icons/md';
+
 interface LeftNavigateProps {
     language: string;
 }

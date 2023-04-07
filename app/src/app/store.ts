@@ -3,6 +3,7 @@ import counterReducer from "../features/counter/counterSlice";
 import localeReducer from "../features/v1/locale/slice";
 import languageReducer from "../features/v1/language/slice";
 import tabsSlice from "../features/v1/selected-panel/slice";
+import imageScrollPanelSlice from "../features/v1/image-card/slice";
 
 import i18n from "i18next";
 import Backend from "i18next-http-backend";
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     locale: localeReducer,
     language: languageReducer,
     category: tabsSlice,
+    imageTimeline: imageScrollPanelSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

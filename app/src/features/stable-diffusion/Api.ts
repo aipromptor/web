@@ -2717,7 +2717,7 @@ export interface TextToImageResponse {
    */
   images?: string[];
   /** Parameters */
-  parameters: object;
+  parameters: StableDiffusionProcessingTxt2Img;
   /** Info */
   info: string;
 }

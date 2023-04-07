@@ -4,5 +4,7 @@
     "sd-server-label":"服务器地址",
     "sd-server-web-url-placeholder":"Stable Diffusion Web 服务器地址",
     "sd-server-settings":"服务器配置",
-    "button-generating":"正在生成"
+    "button-generating":"正在生成",
+    "prompt":"提示词",
+    "negativePrompt":"反向提示词"
 }

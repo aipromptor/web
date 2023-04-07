@@ -4,5 +4,7 @@
     "sd-server-label":"Server address",
     "sd-server-web-url-placeholder":"your Stable Diffusion web url",
     "sd-server-settings":"Server Settings",
-    "button-generating":"Generating"
+    "button-generating":"Generating",
+    "prompt":"Prompt",
+    "negativePrompt":"Negative Prompt"
 }

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../../app/store";
 import i18n from "i18next";
+import { RootState } from "../../../app/store";
 
 type CountryOption = "CN" | "US";
 
@@ -34,7 +34,7 @@ const initialState: LocaleSelectorState = {
 console.log("initialState", initialState);
 
 const localeSelectorSlice = createSlice({
-    name: "languageSelector",
+    name: "localeSelector",
     initialState,
     reducers: {
         setLocale: (state, action: PayloadAction<CountryOption>) => {},

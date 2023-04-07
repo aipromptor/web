@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
-import i18n from "i18next";
 
 type LanguageOption = "en" | "zh-CN";
 

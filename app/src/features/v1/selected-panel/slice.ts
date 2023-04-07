@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 import { gqlClient } from "../../../app/api";
 import { RootState } from "../../../app/store";
-import { Api as SDAPI, StableDiffusionProcessingImg2Img, TextToImageResponse } from "../../stable-diffusion/Api";
-import axios from "axios";
+import { TextToImageResponse } from "../../stable-diffusion/Api";
 
 interface Tag {
     id: string;
@@ -45,7 +45,7 @@ const initialState: SelectedPanelState = {
     selectedTab: null,
     server: {
         status: "idle",
-        data: { webUrl: "https://fifth-york-terry-pm.trycloudflare.com/" },
+        data: { webUrl: "https://johns-titanium-briefing-invisible.trycloudflare.com/" },
         error: null,
     },
 };
@@ -80,7 +80,7 @@ export const fetchTabs = createAsyncThunk("tabs/fetchTabs", async (_, { getState
         query: query,
         variables: {
             locale: language,
-            filter: { tag_marketings: { name: { eq: "homepage" } } },
+            filter: { label_tags: { value: { eq: "homepage" } } },
         },
     });
     // The value we return becomes the `fulfilled` action payload
@@ -137,7 +137,7 @@ export const fetchPromptsAsync = createAsyncThunk<PromptEntity[], FetchPromptsAr
             variables: {
                 locale: language,
                 id: args.categoryId,
-                filters: { tag_marketings: { name: { eq: "homepage" } } },
+                filters: { label_tags: { value: { eq: "homepage" } } },
             },
         });
         // The value we return becomes the `fulfilled` action payload
@@ -153,14 +153,15 @@ export interface GenerateTextToImageArgs {
 export const generateTextToImage = createAsyncThunk<TextToImageResponse, GenerateTextToImageArgs>(
     "sd/text2image",
     async (args, thunkAPI) => {
+        console.log('args.prompt', args.prompt);
         const server = getServer(thunkAPI.getState() as RootState);
-
         const url = new URL("/sdapi/v1/txt2img", server.data.webUrl);
         const request = {
+            serverUrl: server.data.webUrl,
             enable_hr: false,
             denoising_strength: 0,
             firstphase_width: 0,
-            prompt: "masterpiece, best quality, masterpiece,best quality,official art,extremely detailed CG unity 8k wallpaper, extremely delicate and beautiful, RAW photo,realistic,photo-realistic, ultra high res,depth of field,illustration,amazing,finely detail,huge filesize,ultra-detailed,highres,extremely detailed, <lora:koreanDollLikeness_v15:0.2>, <lora:shojovibe_v11:0.2>, <lora:chineseQingchunGirl:0.4>, in spring, girl, black hair, long hair, hair ribbon, light blush, light smile, black eyes, perfect eyes, slender thighs, jeans, brown cardigan , bobby socks, uwabaki, hair ribbon, hands_on_hips, collared shirt",
+            prompt: args.prompt,
             seed: -1,
             subseed: -1,
             sampler_name: "DPM++ SDE Karras",
@@ -173,15 +174,9 @@ export const generateTextToImage = createAsyncThunk<TextToImageResponse, Generat
             restore_faces: false,
             tiling: false,
             negative_prompt:
-                "sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans, text, error, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature, (mole:1.4),NSFW",
+                "bra, covered nipples, underwear,EasyNegative, paintings, sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans,extra fingers,fewer fingers,((watermark:2)),(white letters:1), (multi nipples), lowres, bad anatomy, bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worst quality, low qualitynormal quality, jpeg artifacts, signature, watermark, username,bad feet, {Multiple people},lowres,bad anatomy,bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worstquality, low quality, normal quality,jpegartifacts,signature, watermark, blurry,bad feet,cropped,poorly drawn hands,poorly drawn face,mutation,deformed,worst quality,low quality,normal quality,jpeg artifacts,signature,extra fingers,fewer digits,extra limbs,extra arms,extra legs,malformed limbs,fused fingers,too many fingers,long neck,cross-eyed,mutated hands,polar lowres,bad body,bad proportions,gross proportions,text,error,missing fingers,missing arms,extra arms,missing legs,wrong feet bottom render,extra digit,abdominal stretch, glans, pants, briefs, knickers, kecks, thong, {{fused fingers}}, {{bad body}}, ((long hair))",
         };
-        console.log("url.toString()", url.toString());
-        var response = await axios.post(`${url.toString()}`, request, {
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json",
-            },
-        });
+        var response = await axios.post(`${url.toString()}`, request);
         return response.data;
     }
 );
@@ -245,13 +240,14 @@ const tabsSlice = createSlice({
             })
             // generate text to image
             .addCase(generateTextToImage.pending, (state) => {
-                state.server.status = "succeeded";
+                state.server.status = "loading";
                 console.log("state.server.status", state.server.status);
                 state.error = null;
             })
             .addCase(generateTextToImage.fulfilled, (state, action) => {
-                state.server.status = "loading";
+                state.server.status = "succeeded";
                 console.log("state.server.status", state.server.status);
+                console.dir("generateTextToImage.result", action.payload);
             })
             .addCase(generateTextToImage.rejected, (state, action) => {
                 state.server.status = "failed";
