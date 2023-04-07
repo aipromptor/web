@@ -7,7 +7,7 @@ import { BiChat, BiLike, BiShare } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppSelector } from "../../../app/hooks";
 import { getImages, ImageCardState } from "./slice";
 
 const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
