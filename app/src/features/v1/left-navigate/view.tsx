@@ -9,7 +9,6 @@ interface LeftNavigateProps {
 
 const LeftNavigate: React.FC<LeftNavigateProps> = ({ language }) => {
     const { t } = useTranslation('actions');
-    const size = 'lg';
     return (
         <VStack alignItems='flex-start' minW='3xs'>
             <Button colorScheme='gray' variant='ghost' leftIcon={<MdHome />}> {t('home')}</Button>

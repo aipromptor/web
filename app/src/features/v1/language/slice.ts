@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../../app/store";
 
-type LanguageOption = "en" | "zh-CN";
-
 interface LanguageState {
     id: string;
     title: string;

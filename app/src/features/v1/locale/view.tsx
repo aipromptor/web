@@ -2,7 +2,7 @@ import {
     Box, Button, Menu,
     MenuButton, MenuItem, MenuList
 } from "@chakra-ui/react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppSelector } from "../../../app/hooks";
 import { getCountries } from "./slice";
 // import { FlagIcon } from "emoji-flags";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -11,18 +11,18 @@ import { useTranslation } from 'react-i18next';
 
 const LocaleSelector = () => {
    
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
     const { t } = useTranslation('actions');
 
 
     const countries = useAppSelector(getCountries);
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        // dispatch(setLanguage(event.target.value as "en" | "zh-CN"));
-    };
+    // const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    //     // dispatch(setLanguage(event.target.value as "en" | "zh-CN"));
+    // };
 
-    const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        // dispatch(setLocale(e.target.value));
-    };
+    // const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //     // dispatch(setLocale(e.target.value));
+    // };
 
     return (
         <Menu>

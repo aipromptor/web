@@ -87,8 +87,6 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
 
 export function ImageScrollPanel() {
 
-    const dispatch = useAppDispatch();
-
     const images = useAppSelector(getImages);
 
     return (

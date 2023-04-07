@@ -1,9 +1,7 @@
-import { ChakraProvider, Container, StackDivider, VStack, HStack, Box, Flex } from "@chakra-ui/react";
+import { ChakraProvider, Container, Flex, HStack, StackDivider, VStack } from "@chakra-ui/react";
 import HeaderV1 from "./header/view";
-import { PromptSelectedPanel } from "./selected-panel/view";
-import Search from "./serach/view";
 import LeftNavigate from "./left-navigate/view";
-import DrawNavigate from "./produce/view"
+import { PromptSelectedPanel } from "./selected-panel/view";
 
 function AppV1() {
     return (
