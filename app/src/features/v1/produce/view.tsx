@@ -1,7 +1,7 @@
 import { Button, HStack } from "@chakra-ui/react";
 import React from "react";
-import { MdDraw } from 'react-icons/md'
 import { useTranslation } from 'react-i18next';
+import { MdDraw } from 'react-icons/md';
 
 interface DrawNavigateProps {
     language: string;
