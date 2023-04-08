@@ -3,7 +3,9 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { gqlClient } from "../../../app/api";
 import { RootState } from "../../../app/store";
+import { TextToImageHistoryEntity } from "../../../graphql/types";
 import { TextToImageResponse } from "../../stable-diffusion/Api";
+import { GenerateTextToImageArgs } from "../types";
 
 interface Tag {
     id: string;
@@ -45,7 +47,7 @@ const initialState: SelectedPanelState = {
     selectedTab: null,
     server: {
         status: "idle",
-        data: { webUrl: "https://johns-titanium-briefing-invisible.trycloudflare.com/" },
+        data: { webUrl: "https://ebay-tied-sk-ed.trycloudflare.com/" },
         error: null,
     },
 };
@@ -101,6 +103,7 @@ interface PromptEntity {
     };
 }
 
+
 interface FetchPromptsArgs {
     categoryId?: string;
 }
@@ -146,22 +149,22 @@ export const fetchPromptsAsync = createAsyncThunk<PromptEntity[], FetchPromptsAr
     }
 );
 
-export interface GenerateTextToImageArgs {
-    prompt: string;
-}
-
-export const generateTextToImage = createAsyncThunk<TextToImageResponse, GenerateTextToImageArgs>(
-    "sd/text2image",
+export const saveHistory = createAsyncThunk<TextToImageHistoryEntity, GenerateTextToImageArgs>(
+    "api/createTextToImageHistory",
     async (args, thunkAPI) => {
-        console.log('args.prompt', args.prompt);
+
+        const now = new Date();
+        const promptIds = args.pickedPrompts.map(t => t.id);
         const server = getServer(thunkAPI.getState() as RootState);
-        const url = new URL("/sdapi/v1/txt2img", server.data.webUrl);
+        const language = getSystemLanguage(thunkAPI.getState() as RootState);
+        const prompt = args.pickedPrompts.map(t => t.tag).join(',');
+
         const request = {
             serverUrl: server.data.webUrl,
             enable_hr: false,
             denoising_strength: 0,
             firstphase_width: 0,
-            prompt: args.prompt,
+            prompt: prompt,
             seed: -1,
             subseed: -1,
             sampler_name: "DPM++ SDE Karras",
@@ -176,6 +179,87 @@ export const generateTextToImage = createAsyncThunk<TextToImageResponse, Generat
             negative_prompt:
                 "bra, covered nipples, underwear,EasyNegative, paintings, sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans,extra fingers,fewer fingers,((watermark:2)),(white letters:1), (multi nipples), lowres, bad anatomy, bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worst quality, low qualitynormal quality, jpeg artifacts, signature, watermark, username,bad feet, {Multiple people},lowres,bad anatomy,bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worstquality, low quality, normal quality,jpegartifacts,signature, watermark, blurry,bad feet,cropped,poorly drawn hands,poorly drawn face,mutation,deformed,worst quality,low quality,normal quality,jpeg artifacts,signature,extra fingers,fewer digits,extra limbs,extra arms,extra legs,malformed limbs,fused fingers,too many fingers,long neck,cross-eyed,mutated hands,polar lowres,bad body,bad proportions,gross proportions,text,error,missing fingers,missing arms,extra arms,missing legs,wrong feet bottom render,extra digit,abdominal stretch, glans, pants, briefs, knickers, kecks, thong, {{fused fingers}}, {{bad body}}, ((long hair))",
         };
+        const mutation = gql`
+        mutation createTextToImageHistory(
+            $data: TextToImageHistoryInput!
+            $locale: I18NLocaleCode
+            $picked_prompts_pagination: PaginationArg
+          ) {
+            createTextToImageHistory(data: $data, locale: $locale) {
+              data {
+                id
+                attributes {
+                  picked_prompts(pagination: $picked_prompts_pagination) {
+                    data {
+                      id
+                      attributes {
+                        tag
+                        title
+                      }
+                    }
+                  }
+                  paramters_info
+                  picked_negative_prompts {
+                    data {
+                      id
+                      attributes {
+                        tag
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `;
+
+        const entity = {
+            picked_prompts: promptIds,
+            paramters_info: request,
+            publishedAt: now,
+        };
+
+        const response = await gqlClient.mutate({
+            mutation: mutation,
+            variables: {
+                locale: language,
+                data: entity,
+                picked_prompts_pagination: { limit: 100 }
+            },
+        });
+
+        return response.data.createTextToImageHistory.data;
+    },
+);
+
+export const generateTextToImage = createAsyncThunk<TextToImageResponse, TextToImageHistoryEntity>(
+    "sd/text2image",
+    async (args, thunkAPI) => {
+        const prompt = args.attributes?.picked_prompts?.data.map(t => t.attributes?.tag).join(',');
+        const server = getServer(thunkAPI.getState() as RootState);
+        const url = new URL("/sdapi/v1/txt2img", server.data.webUrl);
+        const request = {
+            serverUrl: server.data.webUrl,
+            enable_hr: false,
+            denoising_strength: 0,
+            firstphase_width: 0,
+            prompt: prompt,
+            seed: -1,
+            subseed: -1,
+            sampler_name: "DPM++ SDE Karras",
+            batch_size: 1,
+            n_iter: 1,
+            steps: 20,
+            cfg_scale: 7,
+            width: 540,
+            height: 960,
+            restore_faces: false,
+            tiling: false,
+            negative_prompt:
+                "bra, covered nipples, underwear,EasyNegative, paintings, sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans,extra fingers,fewer fingers,((watermark:2)),(white letters:1), (multi nipples), lowres, bad anatomy, bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worst quality, low qualitynormal quality, jpeg artifacts, signature, watermark, username,bad feet, {Multiple people},lowres,bad anatomy,bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worstquality, low quality, normal quality,jpegartifacts,signature, watermark, blurry,bad feet,cropped,poorly drawn hands,poorly drawn face,mutation,deformed,worst quality,low quality,normal quality,jpeg artifacts,signature,extra fingers,fewer digits,extra limbs,extra arms,extra legs,malformed limbs,fused fingers,too many fingers,long neck,cross-eyed,mutated hands,polar lowres,bad body,bad proportions,gross proportions,text,error,missing fingers,missing arms,extra arms,missing legs,wrong feet bottom render,extra digit,abdominal stretch, glans, pants, briefs, knickers, kecks, thong, {{fused fingers}}, {{bad body}}",
+        };
+        
         var response = await axios.post(`${url.toString()}`, request);
         return response.data;
     }
@@ -252,7 +336,7 @@ const tabsSlice = createSlice({
             .addCase(generateTextToImage.rejected, (state, action) => {
                 state.server.status = "failed";
                 console.log("state.server.status", state.server.status);
-            });
+            })
     },
 });
 

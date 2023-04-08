@@ -1,22 +1,31 @@
 import {
-    Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text,
-    VStack
+    Box, Card, CardBody, CardFooter,
+    CardHeader, Drawer, DrawerBody, DrawerCloseButton,
+    DrawerContent, DrawerHeader, DrawerOverlay, Flex, Image,
+    Text, useDisclosure, VStack
 } from "@chakra-ui/react";
 
-import { BiChat, BiLike, BiShare } from "react-icons/bi";
-import { BsThreeDotsVertical } from "react-icons/bs";
-
+import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useAppSelector } from "../../../app/hooks";
-import { getImages, ImageCardState } from "./slice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { getImages, getSystemLanguage, HistoryState, loadHistory } from "./slice";
 
-const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
+const ImageCard: React.FC<{ model: HistoryState }> = ({ model }) => {
 
     const { t } = useTranslation(['actions', 'labels']);
+
     const promptLabel = t('prompt', { ns: 'labels' });
     const negativePromptLabel = t('negativePrompt', { ns: 'labels' });
+
     const src = model.base64RawData ? `data:image/png;base64,${model.base64RawData}` : model.url ? model.url : '';
 
+    const [size, setSize] = useState('')
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const handleCardClick = (newSize: string) => {
+        setSize(newSize)
+        onOpen()
+    }
     return (
         <Card maxW='md'>
             <CardHeader>
@@ -30,7 +39,22 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
                         </Box> */}
                     </Flex>
 
-                    <Popover placement='right'>
+                    <Drawer onClose={onClose} isOpen={isOpen} size={size}>
+                        <DrawerOverlay />
+                        <DrawerContent>
+                            <DrawerCloseButton />
+                            <DrawerHeader>{promptLabel}</DrawerHeader>
+                            <DrawerBody>
+                                <VStack alignItems="flex-start">
+                                    <p>{model.prompt}</p>
+                                    <p> {negativePromptLabel}: {model.negativePrompt}</p>
+                                </VStack>
+
+                            </DrawerBody>
+                        </DrawerContent>
+                    </Drawer>
+
+                    {/* <Popover placement='right'>
                         <PopoverTrigger>
                             <IconButton variant='ghost'
                                 colorScheme='gray'
@@ -48,7 +72,7 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
                                 </VStack>
                             </PopoverBody>
                         </PopoverContent>
-                    </Popover>
+                    </Popover> */}
 
                 </Flex>
             </CardHeader>
@@ -56,10 +80,11 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
                 <Text>
                 </Text>
             </CardBody>
-            <Image
+            <Image onClick={() => handleCardClick('lg')}
+                cursor="pointer"
                 objectFit='cover'
                 src={src}
-                alt='Chakra UI'
+                alt=''
             />
 
             <CardFooter
@@ -71,7 +96,7 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
                     },
                 }}
             >
-                <Button flex='1' variant='ghost' leftIcon={<BiLike />}>
+                {/* <Button flex='1' variant='ghost' leftIcon={<BiLike />}>
                     Like
                 </Button>
                 <Button flex='1' variant='ghost' leftIcon={<BiChat />}>
@@ -79,7 +104,7 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
                 </Button>
                 <Button flex='1' variant='ghost' leftIcon={<BiShare />}>
                     Share
-                </Button>
+                </Button> */}
             </CardFooter>
         </Card>
     );
@@ -87,11 +112,19 @@ const ImageCard: React.FC<{ model: ImageCardState }> = ({ model }) => {
 
 export function ImageScrollPanel() {
 
+    const dispatch = useAppDispatch();
+
+    const systemLanguage = useAppSelector(getSystemLanguage);
+
+    useEffect(() => {
+        dispatch(loadHistory())
+    }, [dispatch, systemLanguage]);
+
     const images = useAppSelector(getImages);
 
     return (
         <Box>
-            <Flex flexWrap="wrap">
+            <Flex flexWrap="wrap" justifyContent="space-between">
                 {images.map((image, index) => (
                     <ImageCard key={index} model={image} />
                 ))}

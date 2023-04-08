@@ -6,15 +6,12 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { RootState } from "../../../app/store";
+import { TextToImageHistoryEntity } from "../../../graphql/types";
+import { uploadTextToImage } from "../image-card/slice";
 import { ImageScrollPanel } from "../image-card/view";
 import { getSystemLanguage } from "../locale/slice";
-import { fetchPromptsAsync, fetchTabs, generateTextToImage, getSelectedTab, getServer, getTabs, setServer, switchTab } from "./slice";
-
-type PromptProps = {
-    id: string;
-    title: string;
-    tag: string;
-}
+import { PromptProps } from "../types";
+import { fetchPromptsAsync, fetchTabs, generateTextToImage, getSelectedTab, getServer, getTabs, saveHistory, setServer, switchTab } from "./slice";
 
 export default function TagSelector() {
 
@@ -72,8 +69,12 @@ export default function TagSelector() {
     };
 
     const handleGenerate = () => {
-        const prompt = selectedPrompts.map(t => t.tag).join(',');
-        dispatch(generateTextToImage({ prompt: prompt }))
+        dispatch(saveHistory({ pickedPrompts: selectedPrompts })).then((result) => {
+            const payload = result.payload as TextToImageHistoryEntity;
+            dispatch(generateTextToImage(payload)).then((generatedResult) => {
+                dispatch(uploadTextToImage(generatedResult.meta.arg.id || ""));
+            });
+        });
     };
 
     return (
