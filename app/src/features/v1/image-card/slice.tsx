@@ -40,21 +40,7 @@ const getloadingPlacehold = (width: number, height: number) => {
 }
 
 const initialState: ImageScrollPanelState = {
-    // images: [
-    //     {
-    //         url: "https://placehold.co/600x400",
-    //         base64RawData: null,
-    //         prompt: "",
-    //         negativePrompt: ""
-    //     },
-    //     {
-    //         url: "https://placehold.co/540x960",
-    //         base64RawData: null,
-    //         prompt: "",
-    //         negativePrompt: ""
-    //     }],
     histories: [],
-
     pagination: { page: 0, pageSize: 10 }
 }
 
